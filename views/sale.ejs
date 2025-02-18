@@ -2,12 +2,12 @@
 <html>
 <head>
     <title>Sell Your House</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/Public/stylesheet/sale.css">
 </head>
 <body>
     <h1>Sell Your House</h1>
     <form action="/upload" method="POST" enctype="multipart/form-data">
-        <!-- Form fields go here -->
+        <!-- Add your form fields here -->
     </form>
 
     <h1>Listed Properties</h1>
@@ -24,8 +24,8 @@
 
         <h3>Uploaded Images</h3>
         <div>
-            <% images.forEach(image => { %>
-                <img src="<%= image %>" alt="Property Image" style="width: 200px; height: auto; margin: 10px;">
+            <% images.forEach((imagePath) => { %>
+                <img src="<%= imagePath %>" alt="Uploaded Image">
             <% }); %>
         </div>
     </div>
