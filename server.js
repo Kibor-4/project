@@ -1,30 +1,74 @@
-// server.js
 const express = require('express');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const cors = require('cors');
-const session = require('express-session');
 const getPool = require('./database/db');
 const routes = require('./router/routes');
 const userRoutes = require('./router/signup');
 const loginRouter = require('./router/auth');
 const addPropertyRouter = require('./router/addproperty');
 const saleRouter = require('./router/salerouter');
-
+const authadmin = require('./router/authadmin');
+const admindash = require('./router/admin');
+const profile = require('./router/user');
+const fs = require('fs'); 
+const propertydetails = require('./router/property');
 
 const app = express();
 
-// CORS configuration (if needed)
-// app.use(cors());
+// Load environment variables from .env file
+require('dotenv').config();
 
-// Session middleware (place before other middleware and routes)
+// Logging middleware (ADDED)
+app.use((req, res, next) => {
+    const now = new Date().toISOString();
+    const logMessage = `${now} - ${req.method} ${req.url} - Session ID: ${req.sessionID || 'No Session'}\n`;
+
+    fs.appendFile('server.log', logMessage, (err) => {
+        if (err) {
+            console.error('Error writing to log file:', err);
+        }
+    });
+
+    console.log(logMessage.trim()); // Also log to console
+    next();
+});
+
+// CORS configuration (if needed)
+app.use(cors());
+
+// ... (Rest of your code remains the same) ...
+
+// MySQL session store configuration
+const sessionStore = new MySQLStore({
+    host: process.env.DB_HOST, // Use DB_HOST from .env
+    port: 3306, // Default MySQL port
+    user: process.env.DB_USER, // Use DB_USER from .env
+    password: process.env.DB_PASSWORD, // Use DB_PASSWORD from .env
+    database: process.env.DB_NAME, // Use DB_NAME from .env
+    createDatabaseTable: true, // Automatically create the sessions table
+    schema: {
+        tableName: 'user_sessions', // Name of the sessions table
+        columnNames: {
+            session_id: 'session_id',
+            expires: 'expires',
+            data: 'data'
+        }
+    }
+});
+
+// Session middleware
 app.use(session({
+    store: sessionStore,
     secret: 'your_secret_key', // Replace with a strong, random secret
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         httpOnly: true,
         secure: false, // Set to true in production with HTTPS
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        sameSite: 'lax' // Ensure the cookie is sent with cross-site requests
     }
 }));
 
@@ -36,32 +80,37 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Mount routes
-app.use('/', routes);
-app.use('/signup', userRoutes); // Corrected signup path
-app.use('/login', loginRouter);
-app.use('/add-property', addPropertyRouter);
-app.use('/sale', saleRouter); 
-
 // Static files
 app.use('/Public', express.static(path.join(__dirname, 'Public')));
 
+// Mount routes
+app.use('/', routes);
+app.use('/', userRoutes); // Signup routes
+app.use('/login', loginRouter); // Login routes
+app.use('/add-property', addPropertyRouter); // Add property routes
+app.use('/sale', saleRouter); // Sale routes
+app.use('/admin/login', authadmin);
+app.use('/admin', admindash); // Mount admin routes at /admin
+app.use('/', profile); // Mount user profile routes directly at root
+app.use('/',propertydetails);
 
-
-// Error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
 // Logout route
 app.get('/logout', (req, res) => {
+    console.log('Session before destruction:', req.session);
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
             return res.status(500).send('Logout failed');
         }
-        res.redirect('/login'); // Redirect to login page after logout
+        console.log('Session destroyed successfully');
+        res.redirect('/login');
     });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error('Error stack:', err.stack);
+    res.status(500).send('Something went wrong!');
 });
 
 // Start server
@@ -70,7 +119,7 @@ async function startServer() {
         const pool = await getPool;
         console.log('Database connected successfully');
 
-        const port = process.env.PORT || 8100;
+        const port = process.env.PORT || 8100; // Use PORT from .env
         app.listen(port, () => {
             console.log(`Server running on port ${port}`);
         });

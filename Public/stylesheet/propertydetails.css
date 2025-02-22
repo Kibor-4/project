@@ -1,0 +1,74 @@
+/* Public/stylesheet/property-details.css */
+
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff; /* Example: Blue color */
+    margin-bottom: 20px;
+}
+
+.property-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.property-details p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.property-details strong {
+    font-weight: bold;
+}
+
+.property-details i {
+    margin-right: 5px;
+    color: #007bff; /* Icon color */
+}
+
+h3 {
+    margin-top: 25px;
+    color: #007bff;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.property-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.property-images img {
+    flex: 1 1 200px; /* Adjust as needed */
+    object-fit: cover;
+    min-height: 150px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .property-details {
+        padding: 15px;
+    }
+
+    .property-images img {
+        flex: 1 1 150px; /* Adjust for smaller screens */
+        min-height: 100px;
+    }
+}

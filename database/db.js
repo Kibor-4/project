@@ -12,7 +12,10 @@ async function createTables(pool) {
                 Username VARCHAR(255) NOT NULL UNIQUE,
                 EMAIL VARCHAR(255) NOT NULL UNIQUE,
                 Date_of_Birth DATE,
-                Password VARCHAR(255) NOT NULL
+                Password VARCHAR(255) NOT NULL,
+                profile_picture VARCHAR(255),
+                name VARCHAR(255),  -- Added name column
+                phone VARCHAR(255)   -- Added phone column
             )
         `);
         console.log('Users table created or verified.');
@@ -28,10 +31,34 @@ async function createTables(pool) {
                 lot_size INT,
                 price DECIMAL(10, 2) NOT NULL,
                 description TEXT,
-                images TEXT -- Store image paths as JSON array
+                images TEXT,
+                user_id INT,
+                FOREIGN KEY (user_id) REFERENCES Users(Id)
             )
         `);
         console.log('Properties table created or verified.');
+        await conn.execute(`
+            CREATE TABLE IF NOT EXISTS user_sessions (
+            session_id VARCHAR(128) NOT NULL PRIMARY KEY,
+            expires BIGINT NOT NULL,
+            data TEXT
+        )
+        `);
+        console.log('express session created successfully.');
+
+        // Check if the created_at column exists and add if not
+        const [columns] = await conn.execute(`SHOW COLUMNS FROM Properties LIKE 'created_at'`);
+
+        if (columns.length === 0) {
+            await conn.execute(`
+                ALTER TABLE Properties
+                ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            `);
+            console.log('Properties table created_at column added.');
+        } else {
+            console.log('Properties table created_at column already exists.');
+        }
+
     } finally {
         conn.release();
     }

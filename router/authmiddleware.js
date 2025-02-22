@@ -1,10 +1,9 @@
-// authMiddleware.js
-function isAuthenticated(req, res, next) {
-    if (req.session && req.session.user) {
+const isAuthenticated = (req, res, next) => {
+    console.log('Session in isAuthenticated middleware:', req.session);
+    if (req.session.userId) {
         return next();
-    } else {
-        res.redirect('/login');
     }
-}
+    res.redirect('/login');
+};
 
 module.exports = isAuthenticated;

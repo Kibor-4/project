@@ -6,7 +6,7 @@ const upload = require('../Public/Uploads/multer'); // Import the upload middlew
 require('dotenv').config();
 
 // Route to handle property submissions
-router.post('/submit', upload.array('images', 5), async (req, res) => {
+router.post('/submit', upload.array('images', ), async (req, res) => {
     try {
         const { location, house_type, sqft, bedrooms, bathrooms, lot_size, price, description } = req.body;
         const images = req.files.map(file => '/Public/Uploads/uploads/' + file.filename); // Corrected line
