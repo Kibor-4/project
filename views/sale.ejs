@@ -3,31 +3,84 @@
 <head>
     <title>Sell Your House</title>
     <link rel="stylesheet" href="/Public/stylesheet/sale.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .property-item-details i {
+            margin-right: 5px;
+        }
+        .property-item {
+            cursor: pointer; /* Add pointer cursor for clickable items */
+        }
+    </style>
 </head>
 <body>
-    <h1>Sell Your House</h1>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <!-- Add your form fields here -->
-    </form>
+    <header>
+        <div class="h_container">
+            <img src="../Public//images/Black Gold Elegant Simple Real Estate Logo (1).png" width="100" height="100" class="logo" alt="Destro Logo">
+            <nav class="navbar">
+                <ul class="navbar-list">
+                    <li><a href="/" class="navbar-link active">Home</a></li>
+                    <li><a href="#" class="navbar-link">Rent</a></li>
+                    <li><a href="/addproperty" class="navbar-link">Upload</a></li>
+                    <li><a href="#" class="navbar-link">Buy</a></li>
+                    <li><a href="/valuate" class="navbar-link">Valuate</a></li>
+                    <li><a href="/about" class="navbar-link">About</a></li>
+                    <li><a href="/login" class="btn btn-fill">Get Started</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <body>
+        <h1>Listed Properties</h1>
+        <div id="property-list">
+            <% properties.forEach((property, index) => { %>
+                <div class="property-item" data-index="<%= index %>" onclick="window.location.href='/property/<%= property.id %>'">
+                    <div class="slideshow-container" id="slideshow-<%= index %>">
+                        <% if (property.images && property.images.length > 0) { %>
+                            <% property.images.forEach((imagePath, imageIndex) => { %>
+                                <div class="mySlides fade">
+                                    <div class="numbertext"><%= imageIndex + 1 %> / <%= property.images.length %></div>
+                                    <img src="<%= imagePath %>" style="width:100%">
+                                </div>
+                            <% }); %>
+                            <a class="prev" onclick="plusSlides(-1, <%= index %>); event.stopPropagation();">&#10094;</a>
+                            <a class="next" onclick="plusSlides(1, <%= index %>); event.stopPropagation();">&#10095;</a>
+                        <% } else { %>
+                            <div class="mySlides fade">
+                                <img src="placeholder-image.jpg" style="width:100%">
+                            </div>
+                        <% } %>
+                    </div>
+                    <div class="property-item-details">
+                        <h2><%= property.house_type %></h2>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= property.location %></p>
+                        <p><i class="fas fa-dollar-sign"></i> $<%= property.price %></p>
+                        <p><i class="fas fa-bed"></i> <%= property.bedrooms %></p>
+                        <p><i class="fas fa-bath"></i> <%= property.bathrooms %></p>
+                    </div>
 
-    <h1>Listed Properties</h1>
-    <div id="property-list">
-        <h2>Property Details</h2>
-        <p><strong>Location:</strong> <%= location %></p>
-        <p><strong>House Type:</strong> <%= house_type %></p>
-        <p><strong>Square Footage:</strong> <%= sqft %> sqft</p>
-        <p><strong>Bedrooms:</strong> <%= bedrooms %></p>
-        <p><strong>Bathrooms:</strong> <%= bathrooms %></p>
-        <p><strong>Lot Size:</strong> <%= lot_size %> sqft</p>
-        <p><strong>Price:</strong> $<%= price %></p>
-        <p><strong>Description:</strong> <%= description %></p>
+                    <div class="property-details" id="property-details-<%= index %>" style="display:none;">
+                        <h2>Property Details</h2>
+                        <p><i class="fas fa-map-marker-alt"></i> <%= property.location %></p>
+                        <p><strong>House Type:</strong> <%= property.house_type %></p>
+                        <p><strong>Square Footage:</strong> <%= property.sqft %> sqft</p>
+                        <p><i class="fas fa-bed"></i> <%= property.bedrooms %></p>
+                        <p><i class="fas fa-bath"></i> <%= property.bathrooms %></p>
+                        <p><strong>Lot Size:</strong> <%= property.lot_size %> sqft</p>
+                        <p><i class="fas fa-dollar-sign"></i> KSh<%= property.price %></p>
+                        <p><strong>Description:</strong> <%= property.description %></p>
 
-        <h3>Uploaded Images</h3>
-        <div>
-            <% images.forEach((imagePath) => { %>
-                <img src="<%= imagePath %>" alt="Uploaded Image">
+                        <h3>Uploaded Images</h3>
+                        <div class="property-images">
+                            <% property.images.forEach((imagePath) => { %>
+                                <img src="<%= imagePath %>" alt="Uploaded Image">
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
             <% }); %>
         </div>
-    </div>
-</body>
+
+        <script src="/Public/Javascript/sale.js"></script>
+    </body>
 </html>

@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/Public/stylesheet/dashboard.css">
-    <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../Public/stylesheet/dashboard.css">
+   
+    
     <style>
         /* User Dropdown Menu */
         .user-menu {
@@ -69,12 +70,12 @@
 <body class="dashboard">
     <header class="dashboard-header">
         <div class="logo">
-            <img src="/favicon.svg" width="190" height="28" alt="Destro Logo">
+            <img src="../Public/images/favicon.svg" width="190" height="28" alt="Destro Logo">
         </div>
         <nav class="navbar">
             <ul class="navbar-list">
                 <li><a href="#" class="navbar-link">Home</a></li>
-                <li><a href="#" class="navbar-link">Properties</a></li>
+                <li><a href="/sale/all" class="navbar-link">Properties</a></li>
                 <li><a href="#" class="navbar-link">Users</a></li>
                 <li><a href="#" class="navbar-link">Analytics</a></li>
             </ul>
@@ -85,23 +86,16 @@
                 <img src="/Public/images/user.png" alt="User Profile" class="profile-pic">
             </button>
             <div class="dropdown-content">
-                <a href="/profile">Profile</a>
-                <a href="/settings">Settings</a>
+                <a href="/user">Profile</a>
+                <a href="#" class="sidebar-link">Overview</a>
+                <a href="#" class="sidebar-link">Properties</a>
+                <a href="#" class="sidebar-link">Users</a>
+                <a href="#" class="sidebar-link">Analytics</a>
+                <a href="/profile">Settings</a>
                 <button class="logout-button" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
     </header>
-
-    <aside class="dashboard-sidebar">
-        <ul class="sidebar-list">
-            <li><a href="#" class="sidebar-link">Overview</a></li>
-            <li><a href="#" class="sidebar-link">Properties</a></li>
-            <li><a href="#" class="sidebar-link">Users</a></li>
-            <li><a href="#" class="sidebar-link">Analytics</a></li>
-            <li><a href="#" class="sidebar-link">Settings</a></li>
-            <li><a href="#" class="sidebar-link">Log Out</a></li>
-        </ul>
-    </aside>
 
     <main class="dashboard-main">
         <h1>Dashboard Overview</h1>
@@ -109,19 +103,19 @@
         <div class="metrics">
             <div class="metric-card">
                 <h2>Total Properties</h2>
-                <p>1,234</p>
+                <p><%= totalProperties %></p>
             </div>
             <div class="metric-card">
                 <h2>Active Listings</h2>
-                <p>567</p>
+                <p><%= activeListings %></p>
             </div>
             <div class="metric-card">
                 <h2>Total Users</h2>
-                <p>890</p>
+                <p><%= totalUsers %></p>
             </div>
             <div class="metric-card">
                 <h2>Revenue</h2>
-                <p>$1,234,567</p>
+                <p>$<%= revenue %></p>
             </div>
         </div>
 
@@ -138,21 +132,17 @@
         <section class="property-listings">
             <h2>Recent Listings</h2>
             <div class="property-grid">
-                <div class="property-card">
-                    <img src="/Public/images/property-1.jpg" alt="Property 1">
-                    <h3>123 Main St</h3>
-                    <p>$500,000</p>
-                </div>
-                <div class="property-card">
-                    <img src="/Public/images/property-2.jpg" alt="Property 2">
-                    <h3>456 Elm St</h3>
-                    <p>$750,000</p>
-                </div>
-                <div class="property-card">
-                    <img src="/Public/images/property-3.jpg" alt="Property 3">
-                    <h3>789 Oak St</h3>
-                    <p>$1,000,000</p>
-                </div>
+                <% recentListings.forEach(listing => { %>
+                    <div class="property-card">
+                        <%
+                            let imageArray = JSON.parse(listing.images || '[]'); // Parse images, handle null
+                            let imageUrl = imageArray.length > 0 ? imageArray[0] : '/Public/images/placeholder.jpg'; // Get first image or placeholder
+                        %>
+                        <img src="<%= imageUrl %>" alt="<%= listing.location %>">
+                        <h3><%= listing.location %></h3>
+                        <p>$<%= listing.price %></p>
+                    </div>
+                <% }); %>
             </div>
         </section>
     </main>
@@ -169,7 +159,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', ()=> {
             const userMenu = document.querySelector('.user-menu');
             const dropdownContent = document.querySelector('.dropdown-content');
 

@@ -12,18 +12,21 @@
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form method="POST" action="/login">  
+    <form method="POST" action="/login">
         <h3>Login Here</h3>
 
+        <% if (typeof error !== 'undefined' && error) { %>
+            <p style="color: red; text-align: center;"><%= error %></p>
+        <% } %>
+
         <label for="username">Username</label>
-        <input type="text" placeholder="Email or Phone" id="username" name="username" required> <label for="password">Password</label>
+        <input type="text" placeholder="Email or Phone" id="username" name="username" required>
+        <label for="password">Password</label>
         <input type="password" placeholder="Password" id="password" name="password" required>
-        <button type="submit">Log In</button> 
+        <button type="submit">Log In</button>
         <div class="register">
             <p>Don't Have Account? <a href="/signup">SignUp</a></p>
         </div>
-
-        
     </form>
 </body>
 </html>
